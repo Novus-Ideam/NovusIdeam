@@ -59,6 +59,7 @@ function getSearch(req, res) {
 function getAbout(req, res) {
   //sending the user to the about page
   // about.ejs
+  res.render('./pages/about.ejs');
 }
 
 function save(req, res) {
