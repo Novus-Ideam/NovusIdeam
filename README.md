@@ -14,7 +14,7 @@ The user would like to generate ideas to start a small business but doesn’t kn
 ## Change Log
 <!-- TODO -->
 ## Credits and Collaborations
-<!-- TODO -->
+- Chance Harmon (TA)
 ## Domain Model
 ![Domain Model](public/assets/NoIdeamDomainModel.png)
 ## Database ERD
