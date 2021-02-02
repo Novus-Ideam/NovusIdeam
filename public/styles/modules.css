@@ -2,7 +2,20 @@ body {
   background-color: rgb(169, 169, 255);
 }
 
-h1 {
+header {
+  margin-top: 25px;
   font-family: 'Noto Sans JP', sans-serif;
-  text-align: center;
+}
+
+h1 {
+  text-align: right;
+  font-size: 3em;
+}
+
+nav > ul > li > a {
+  text-decoration: none;
+}
+
+nav > ul > li > a:hover {
+  color: yellow;
 }

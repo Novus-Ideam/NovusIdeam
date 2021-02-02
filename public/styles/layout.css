@@ -1,0 +1,50 @@
+body {
+  width: 1000px;
+  margin: auto;
+}
+
+main {
+  margin-top: 50px;
+}
+
+nav {
+  margin-top: 15px;
+}
+
+ul { 
+  display: flex;
+  flex-direction: row;
+}
+
+li {
+  text-align: center;
+  flex-grow: 1;
+}
+
+main {
+  width: 100%;
+}
+
+main > table {
+  width: 90%;
+  margin: auto;
+  margin-top: 70px;
+  line-height: 20px;
+  border: solid black 1px;
+}
+
+tr, th, td {
+  border: solid black 1px;
+}
+
+th, td {
+  text-align: left;
+  padding-left: 10px;
+  line-height: 30px;
+}
+
+th {
+  font-weight: bold;
+}
+
+
