@@ -61,4 +61,7 @@ function getSavedResults(req, res) {
 // ===== other functions ===== //
 
 // ===== start the server ===== //
-app.listen(PORT, () => console.log(`up on PORT ${PORT}`));
+client.connect() // Starts connection to postgres 
+.then ( () => {
+  app.listen(PORT, () => console.log(`up on PORT ${PORT}`));
+});
