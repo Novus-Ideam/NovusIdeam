@@ -5,6 +5,8 @@ const superagent = require('superagent');
 require('dotenv').config();
 const methodOverride = require('method-override');
 const pg = require('pg');
+const googleTrends = require('google-trends-api');
+const cheerio = require('cheerio');//needed for the google scrape of the results
 
 // ===== setup the app ===== //
 const app = express();
@@ -25,10 +27,27 @@ app.get('/saved-results', getSavedResults);
 app.post('/search', save);
 app.delete('/search', deleteSaved);
 
-// ===== helper functions ===== //
+// ===== callback functions ===== //
 
 function getHomeData(req, res) {
   //rendering all the search information
+  let keyword = 'mucho burrito';
+
+  googleTrends.relatedQueries({ keyword: keyword })
+    .then(results => {
+      //console.log(`is this working? ${JSON.parse(results.default.rankedList[0].rankedKeyword)}`);
+      const parsedResults = JSON.parse(results);
+      console.log(parsedResults.default.rankedList[1]);//possible creat a toggle button that switches from 0 to 1 based on what the user is looking for.
+      const rankedKeywordList = parsedResults.default.rankedList[1];
+    }).catch(error => {
+      console.error('Oh no there was an error', error);
+    });
+
+  const domainUrl = `https://api.domainsdb.info/v1/domains/search?&limit=5&country=us&domain=${keyword}`;
+  superagent.get(domainUrl).then(search => {
+    const suggestedDomains = search.body;
+    console.log(suggestedDomains);
+  });
   res.render('./pages/index.ejs');
 }
 
