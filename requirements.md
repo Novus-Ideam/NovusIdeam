@@ -3,6 +3,7 @@
 ## Vision
 Novus Ideam is a utility for investigating novel web app ideas based on web search query data. While new ideas for web apps are a dime a dozen, we seek to provide a way to easily target keyword searches with a low query volume : result count ratio, allowing for an optimized targeting of subjects with relatively high search popularity and low result count. This product will allow budding entrepreneurs to more effectively target unsaturated niches in the exapnding web-app space, using data-based decision making to optimize their efforts.
 ## Scope (In/Out)
+
 ### Minimum Viable Product
 * Our app will allow users to enter a keyword topic and return a suggested list of search terms related to that query
 * Using google trends api, the app will return the most popular related search keywords to the user query.
@@ -11,6 +12,10 @@ Novus Ideam is a utility for investigating novel web app ideas based on web sear
 * Users will then be able to save these results if wanted, for later review.  
 ### Stretch
 * Users will be able to explore available web domains related to these search results using a domain availability api. 
+### Out of Scope
+* Our app will not provide recommendations about domains, only a niche score of that keyword.
+* We will not be creating a mobile app version of this site.
+
 ## Functional Requirements
 1. A user can enter a search keyword query
 2. A user can browse the results of that keyword search query
