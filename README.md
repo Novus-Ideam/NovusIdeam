@@ -18,4 +18,4 @@ The user would like to generate ideas to start a small business but doesn’t kn
 ## Domain Model
 ![Domain Model](public/assets/NoIdeamDomainModel.png)
 ## Database ERD
-![DB-ERD](public/assets/db.jpg)
+![DB-ERD](public/assets/db.png)
