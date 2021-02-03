@@ -15,7 +15,7 @@ const puppeteer = require('puppeteer');
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('./public'));
-app.use(methodOverride('_method')); 
+app.use(methodOverride('_method'));
 const DATABASE_URL = process.env.DATABASE_URL;
 const client = new pg.Client(DATABASE_URL);
 
@@ -29,7 +29,7 @@ app.get('/', getHomeData);
 app.post('/search', getSearch);
 app.get('/about', getAbout);
 app.get('/saved-results', getSavedResults);
-app.post('/save', save);  
+app.post('/save', save);
 app.delete('/save/:id', deleteSaved);
 
 
@@ -47,16 +47,26 @@ async function getSearch(req, res) {
   const keyword = req.body.searchQuery;
   let resultNums = [];
 
-  let googleTrendArray = await googleTrendsData(keyword);
-  let valueMapArray = googleTrendArray.map(value => value.query);
+  const googleTrendArray = await googleTrendsData(keyword);
+  const valueMapArray = googleTrendArray.map(value => value.query);
 
-  // for (let index = 0; index < 5; index++) {
-  //   let math = await scraper(valueMapArray[index])
-  //   resultNums.push(math);
-  // }
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+  const domainSuggestions = await domain(keyword);
+  //const domainMapArray = domainSuggestions.map(suggestion => suggestion.domain)
+  console.log(domainSuggestions.domains[0].domain);
+  //console.log(domainSuggestions.domain);
+  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+  //===================================================================//
+  //  for (let index = 0; index < 5; index++) {
+  //  let math = await scraper(valueMapArray[index])
+  //  resultNums.push(math);
+  //  }
   resultNums = await scraper(valueMapArray);
   console.log(resultNums);
+  //===================================================================//
 
+
+  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
   let newArr = googleTrendArray.slice(0, 5).map((trendQuery, index) => {
     return new NovusIdeam(keyword, resultNums[index], trendQuery);
   });
@@ -64,6 +74,7 @@ async function getSearch(req, res) {
   res.render('./pages/index.ejs', { novusIdeam: newArr });
 }
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 function getAbout(req, res) {
   // send the user to the about page
   res.render('./pages/about.ejs');
@@ -81,7 +92,7 @@ function save(req, res) {
     console.log(`added ${ideam.googleTrendQuery} to database`);
     // TODO: notify user that ideam has been addedto database (using js to turn item blue?)
     res.redirect('/saved-results');
-  
+
   }).catch(error => {
     res.status(500).render('pages/error.ejs');
     console.log(error.message);
@@ -122,11 +133,10 @@ function getSavedResults(req, res) {
   });
 }
 
-
 // ===== Helper Functions ===== // 
-function domain(keyword) {
+async function domain(keyword) {
   const domainUrl = `https://api.domainsdb.info/v1/domains/search?&limit=5&country=us&domain=${keyword}`;
-  superagent.get(domainUrl).then(search => {
+  return superagent.get(domainUrl).then(search => {
     return search.body;
   }).catch(error => {
     res.status(500).render('pages/error.ejs');
@@ -185,11 +195,12 @@ async function scraper(array) {
 // }
 
 // ===== other functions ===== //
-function NovusIdeam(keyword, scraperNum, googleTrendQuery) {
+function NovusIdeam(keyword, scraperNum, googleTrendQuery, suggestedDomain) {
   this.keyword = keyword,
     this.googleTrendQuery = googleTrendQuery.query,
     this.scraperNum = scraperNum,
-    this.nicheScore = scraperNum / googleTrendQuery.value
+    this.nicheScore = scraperNum / googleTrendQuery.value,
+    this.suggestedDomain = suggestedDomain
 }
 
 // TODO: refactor error functions
