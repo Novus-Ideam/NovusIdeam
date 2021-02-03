@@ -10,6 +10,7 @@ header {
 h1 {
   text-align: right;
   font-size: 3em;
+  font-weight: 700;
 }
 
 nav > ul > li > a {
@@ -18,4 +19,20 @@ nav > ul > li > a {
 
 nav > ul > li > a:hover {
   color: yellow;
+}
+
+h2 {
+  font-size: 2em;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 600;
+}
+h3 {
+  font-size: 1.5em;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 500;
+}
+
+p {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 300;
 }

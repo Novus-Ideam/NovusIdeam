@@ -23,6 +23,8 @@ The user would like to generate ideas to start a small business but doesn’t kn
 <!-- TODO -->
 ## Credits and Collaborations
 - Chance Harmon (TA)
+- Skyler Burger (TA)
+
 ## Domain Model
 ![Domain Model](public/assets/NoIdeamDomainModel.png)
 ## Database ERD

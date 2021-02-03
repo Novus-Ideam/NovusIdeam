@@ -32,6 +32,9 @@ main > table {
   line-height: 20px;
   border: solid black 1px;
 }
+main > h2 {
+  text-align: right;
+}
 
 tr, th, td {
   border: solid black 1px;
@@ -47,4 +50,36 @@ th {
   font-weight: bold;
 }
 
+main > section:first-of-type {
+  margin-top: 30px;
+}
+section {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-template-rows: 2fr;
+  border: solid 1px black;
+  padding: 10px;
+}
 
+section > h3 {
+  grid-column: 2/3;
+  grid-row: 1/2;
+  align-self: start;
+}
+section > p {
+  line-height: 20px;
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  align-self: center;
+}
+
+section > ul {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  align-self: end;
+}
+
+section > img:first-of-type {
+  width: 250px;
+  height: 250px;
+}
