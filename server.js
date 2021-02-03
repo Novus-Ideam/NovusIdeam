@@ -7,6 +7,7 @@ const methodOverride = require('method-override');
 const pg = require('pg');
 const googleTrends = require('google-trends-api');
 const puppeteer = require('puppeteer');
+const { promiseImpl } = require('ejs');
 
 // ===== setup the app ===== //
 const app = express();
@@ -19,7 +20,6 @@ const client = new pg.Client(DATABASE_URL);
 const PORT = process.env.PORT || 3111;
 
 // ===== routes ===== //
-
 app.get('/', getHomeData);
 app.post('/search', getSearch);
 app.get('/about', getAbout);
@@ -28,40 +28,49 @@ app.get('/saved-results', getSavedResults);
 app.delete('/search', deleteSaved);
 
 // ===== callback functions ===== //
-
 function getHomeData(req, res) {
-  //rendering all the search information
+
+  // rendering all the search information
   res.render('./pages/index.ejs');
 }
 
-function getSearch(req, res) {
-  //getting the results from the search
-  //index.ejs
+async function getSearch(req, res) {
+  // getsresults from the search
+  // -> index.ejs
   const keyword = req.body.searchQuery;
 
-  console.log(googleTrendsData(keyword));
-  //console.log(scraper(keyword));
-  //console.log(domain(keyword));
+  let resultNums = [];
+  let googleTrendArray =  await googleTrendsData(keyword);
 
-  let googleTrendArray = googleTrendsData(keyword);
-  console.log(googleTrendArray);
-  scraper(keyword);
-  domain(keyword);
+  // console.log(googleTrendArray); 
+  let valueMapArray = googleTrendArray.map(value => value.query);
+  console.log(valueMapArray);
+  // console.log(await scrapeAll(valueMapArray[0]));
 
-  //const novusIdeam = 
+  for (let index = 0; index < 5; index++) {
+    resultNums.push(await scraper(valueMapArray[index]));
+  }
+  console.log(resultNums);
 
+// This is corpse code ************
+  // let newArr = googleTrendArray.map((trendQuery) => {
+  //   const scraperNum = await scraper(trendQuery);
+  //   return new NovusIdeam(keyword, scraperNum, trendQuery);
+  // });
+  // console.log(newArr);
+  
   res.render('./pages/index.ejs');
 }
 
 function getAbout(req, res) {
-  //sending the user to the about page
-  // about.ejs
+  // sending the user to the about page
+  // -> about.ejs
   res.render('./pages/about.ejs');
 }
 
 function save(req, res) {
-  //saving the the search results to the DB
-  //redirect to /saved-results?
+  // saving the the search results to the DB
+  // redirect to /saved-results?
 
   // takes an 'ideam' object via POST on /search
   const keyword = req.body
@@ -74,8 +83,8 @@ function save(req, res) {
 }
 
 function deleteSaved(req, res) {
-  //delete saved 
-  //saved.ejs
+  // delete saved query
+  // -> saved.ejs
 
   // takes DELETE on route /saved-results/:id 
   const id = req.params.id;
@@ -108,18 +117,19 @@ function domain(keyword) {
   });
 }
 
-function googleTrendsData(keyword) {
-  return googleTrends.relatedQueries({ keyword: keyword })
+async function googleTrendsData(keyword) {
+  return await googleTrends.relatedQueries({ keyword: keyword })
     .then(results => {
       const parsedResults = JSON.parse(results);
       //possible creat a toggle button that switches from 0 to 1 based on what the user is looking for.
-      const relatedKeyword = parsedResults.default.rankedList[1];
+      const relatedKeyword = parsedResults.default.rankedList[0].rankedKeyword;
       return relatedKeyword;
     }).catch(error => {
       console.error('Oh no there was an error', error);
     });
 }
 
+// ***Chance Harmon wrote most of the below function with reference to https://www.youtube.com/watch?v=4q9CNtwdawA ***
 async function scraper(keyword) {
   let q = keyword;
   let url = `https://www.google.com/search?q=${q}`;
@@ -129,6 +139,8 @@ async function scraper(keyword) {
   let data = await page.evaluate(() => {
     let resultCount = document.querySelector('#result-stats').textContent;
     return { resultCount }
+  }).catch(error => {
+    console.error('your scraper scraped the bottom', error);
   });
   await browser.close();
   const string = data.resultCount;
@@ -137,12 +149,21 @@ async function scraper(keyword) {
   return resultCountInt;
 }
 
+async function scrapeAll(array) {
+  let countArray = array;
+  for (let item of countArray){
+    const totalResults = await scraper(item);
+    item = totalResults;
+  };
+  return countArray;
+}
+
 // ===== other functions ===== //
-function NovusIdeam(keyword, scraperNum, googleTrendScore) {
-  this.keyword = keyword;
-  this.googleTrendquery = googleTrendScore.query;
-  this.scraperNum = scraper(keyword);
-  this.nicheScore = googleTrendScore.value / scraperNum;
+function NovusIdeam(keyword, scraperNum, googleTrendQuery) {
+  this.keyword = keyword,
+  this.googleTrendQuery = googleTrendQuery.query,
+  this.scraperNum = scraperNum,
+  this.nicheScore = googleTrendQuery.value / scraperNum
 }
 
 // ===== start the server ===== //

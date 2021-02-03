@@ -24,6 +24,11 @@ The user would like to generate ideas to start a small business but doesn’t kn
 ## Credits and Collaborations
 - Chance Harmon (TA)
 - Skyler Burger (TA)
+- Nico Ryan (TA)
+- Regex101.com
+- https://www.youtube.com/watch?v=4q9CNtwdawA
+- https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop#37576787
+
 
 ## Domain Model
 ![Domain Model](public/assets/NoIdeamDomainModel.png)
