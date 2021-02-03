@@ -45,7 +45,7 @@ async function getSearch(req, res) {
 
   //  TODO: add loading page to index.ejs
   const keyword = req.body.searchQuery;
-  const resultNums = [];
+  let resultNums = [];
 
   const googleTrendArray = await googleTrendsData(keyword);
   const valueMapArray = googleTrendArray.map(value => value.query);
@@ -57,10 +57,12 @@ async function getSearch(req, res) {
   //console.log(domainSuggestions.domain);
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
   //===================================================================//
-  for (let index = 0; index < 5; index++) {
-    let math = await scraper(valueMapArray[index])
-    resultNums.push(math);
-  }
+  //  for (let index = 0; index < 5; index++) {
+  //  let math = await scraper(valueMapArray[index])
+  //  resultNums.push(math);
+  //  }
+  resultNums = await scraper(valueMapArray);
+  console.log(resultNums);
   //===================================================================//
 
 
@@ -156,24 +158,31 @@ async function googleTrendsData(keyword) {
 }
 
 // ***Chance Harmon wrote most of the below function with reference to https://www.youtube.com/watch?v=4q9CNtwdawA ***
-async function scraper(keyword) {
-  let q = keyword;
-  let url = `https://www.google.com/search?q=${q}`;
+async function scraper(array) {
+  const resultCountInts = [];
   let browser = await puppeteer.launch();
-  let page = await browser.newPage();
-  await page.goto(url, { waitIntil: 'networkidle2' })
-  let data = await page.evaluate(() => {
-    let resultCount = document.querySelector('#result-stats').textContent;
-    return { resultCount }
-  }).catch(error => {
-    res.status(500).render('pages/error.ejs');
-    console.log(error.message);
-  });
+  // loop over array here 
+  for (let i = 0; i < array.length; i++){
+    const q = array[i];
+    const url = `https://www.google.com/search?q=${q}`;
+    let page = await browser.newPage();
+    await page.goto(url, { waitIntil: 'networkidle2' });
+    let data = await page.evaluate( () => {
+      const resultCount = document.querySelector('#result-stats').textContent;
+      return { resultCount }
+    }).catch(error => {
+      res.status(500).render('pages/error.ejs');
+      console.log(error.message);
+    });
+    const string = data.resultCount;
+    const regex = /[0-9,]+/;
+    const resultCountInt = parseInt(regex.exec(string)[0].replace(/,/g, ''));
+    resultCountInts.push(resultCountInt);
+    // await page.close();
+  }
+  // end loop
   await browser.close();
-  const string = data.resultCount;
-  const regex = /[0-9,]+/;
-  const resultCountInt = parseInt(regex.exec(string)[0].replace(/,/g, ''));
-  return resultCountInt;
+  return resultCountInts;
 }
 
 // async function scrapeAll(array) {
