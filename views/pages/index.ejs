@@ -12,6 +12,7 @@
                 <th>Google results</th>
                 <th>Competition</th>
                 <th></th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -37,6 +38,16 @@
                       <input type="hidden" name="nicheScore" value="<%= novusIdeam.nicheScore%>">
                       <input type="submit" value="Save">
                     </form>
+                  </td>
+                  <td>
+                    <button> Get Domain Suggestions</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td><a
+                      href="https://domains.google.com/registrar/search?hl=en&searchTerm=<%= novusIdeam.suggestedDomain %>">
+                      <%= novusIdeam.suggestedDomain %>
+                    </a>
                   </td>
                 </tr>
                 <% });%>
