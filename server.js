@@ -1,4 +1,6 @@
 'use strict';
+
+
 // ===== packages ===== //
 const express = require('express');
 const superagent = require('superagent');
@@ -8,57 +10,60 @@ const pg = require('pg');
 const googleTrends = require('google-trends-api');
 const puppeteer = require('puppeteer');
 
+
 // ===== setup the app ===== //
 const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('./public'));
+app.use(methodOverride('_method')); 
 const DATABASE_URL = process.env.DATABASE_URL;
 const client = new pg.Client(DATABASE_URL);
 
+
 // ===== other global variables ===== //
 const PORT = process.env.PORT || 3111;
+
 
 // ===== routes ===== //
 app.get('/', getHomeData);
 app.post('/search', getSearch);
 app.get('/about', getAbout);
 app.get('/saved-results', getSavedResults);
-//app.post('/search', save);
-app.delete('/search', deleteSaved);
+app.post('/save', save);  
+app.delete('/save/:id', deleteSaved);
+
 
 // ===== callback functions ===== //
 function getHomeData(req, res) {
-
   // rendering all the search information
-  res.render('./pages/index.ejs');
+  res.render('./pages/index.ejs', { novusIdeam: [] });
 }
 
 async function getSearch(req, res) {
   // getsresults from the search
   // -> index.ejs
-  const keyword = req.body.searchQuery;
 
+  //  TODO: add loading page to index.ejs
+  const keyword = req.body.searchQuery;
   let resultNums = [];
+
   let googleTrendArray = await googleTrendsData(keyword);
   let valueMapArray = googleTrendArray.map(value => value.query);
 
   for (let index = 0; index < 5; index++) {
-    let math = await scraper(valueMapArray[index]) /// googleTrendArray[index].value;
+    let math = await scraper(valueMapArray[index])
     resultNums.push(math);
   }
-  //console.log(resultNums);
 
   let newArr = googleTrendArray.slice(0, 5).map((trendQuery, index) => {
     return new NovusIdeam(keyword, resultNums[index], trendQuery);
   });
-  console.log(newArr);
 
   res.render('./pages/index.ejs', { novusIdeam: newArr });
 }
 
 function getAbout(req, res) {
-  // sending the user to the about page
-  // -> about.ejs
+  // send the user to the about page
   res.render('./pages/about.ejs');
 }
 
@@ -67,47 +72,63 @@ function save(req, res) {
   // redirect to /saved-results?
 
   // takes an 'ideam' object via POST on /search
-  const keyword = req.body
+  const ideam = req.body
   const sqlQuery = `INSERT INTO searches (keyword, google_results_count, niche_score) VALUES ($1, $2, $3) RETURNING id;`;
-  const sqlArray = [ideam.keyword, ideam.google_results_count, ideam.niche_score]
+  const sqlArray = [ideam.googleTrendQuery, ideam.scraperNum, ideam.nicheScore]
   return client.query(sqlQuery, sqlArray).then(() => {
-    // notify user that ideam has been addedto database (using js to turn item blue?)
-    console.log(`added ${ideam.keyword} to database`);
-  })
+    console.log(`added ${ideam.googleTrendQuery} to database`);
+    // TODO: notify user that ideam has been addedto database (using js to turn item blue?)
+    res.redirect('/saved-results');
+  
+  }).catch(error => {
+    res.status(500).render('pages/error.ejs');
+    console.log(error.message);
+  });
 }
 
 function deleteSaved(req, res) {
   // delete saved query
   // -> saved.ejs
 
-  // takes DELETE on route /saved-results/:id 
+  // takes DELETE on route /saved/:id 
   const id = req.params.id;
+  console.log(id);
   // query db to delete item
   const sqlQuery = `DELETE FROM searches WHERE id = $1;`;
   const sqlArray = [id];
   return client.query(sqlQuery, sqlArray).then(() => {
     console.log(`deleted row ${id}`);
     res.redirect('/saved-results');
-  })
+  }).catch(error => {
+    res.status(500).render('pages/error.ejs');
+    console.log(error.message);
+  });
 }
 
 function getSavedResults(req, res) {
-  //take the user to the saved results page. 
-  //saved.ejs
+  // take the user to the saved results page. 
+  // -> saved.ejs
 
   // Query SQL db for all saved searches
-  const sqlQuery = `SELECT * FROM searches ORDER BY id;`;
+  const sqlQuery = `SELECT * FROM searches ORDER BY niche_score;`;
   return client.query(sqlQuery).then(result => {
+    console.log(result.rows);
     res.render('pages/saved.ejs', { results: result.rows }); // Passes 'results' to saved.ejs
-  })
+  }).catch(error => {
+    res.status(500).render('pages/error.ejs');
+    console.log(error.message);
+  });
 }
+
+
 // ===== Helper Functions ===== // 
 function domain(keyword) {
   const domainUrl = `https://api.domainsdb.info/v1/domains/search?&limit=5&country=us&domain=${keyword}`;
   superagent.get(domainUrl).then(search => {
     return search.body;
   }).catch(error => {
-    console.error('we broke', error)
+    res.status(500).render('pages/error.ejs');
+    console.log(error.message);
   });
 }
 
@@ -119,7 +140,8 @@ async function googleTrendsData(keyword) {
       const relatedKeyword = parsedResults.default.rankedList[0].rankedKeyword;
       return relatedKeyword;
     }).catch(error => {
-      console.error('Oh no there was an error', error);
+      res.status(500).render('pages/error.ejs');
+      console.log(error.message);
     });
 }
 
@@ -134,7 +156,8 @@ async function scraper(keyword) {
     let resultCount = document.querySelector('#result-stats').textContent;
     return { resultCount }
   }).catch(error => {
-    console.error('your scraper scraped the bottom', error);
+    res.status(500).render('pages/error.ejs');
+    console.log(error.message);
   });
   await browser.close();
   const string = data.resultCount;
@@ -143,14 +166,14 @@ async function scraper(keyword) {
   return resultCountInt;
 }
 
-async function scrapeAll(array) {
-  let countArray = array;
-  for (let item of countArray) {
-    const totalResults = await scraper(item);
-    item = totalResults;
-  };
-  return countArray;
-}
+// async function scrapeAll(array) {
+//   let countArray = array;
+//   for (let item of countArray) {
+//     const totalResults = await scraper(item);
+//     item = totalResults;
+//   };
+//   return countArray;
+// }
 
 // ===== other functions ===== //
 function NovusIdeam(keyword, scraperNum, googleTrendQuery) {
@@ -159,6 +182,11 @@ function NovusIdeam(keyword, scraperNum, googleTrendQuery) {
     this.scraperNum = scraperNum,
     this.nicheScore = scraperNum / googleTrendQuery.value
 }
+
+// TODO: refactor error functions
+// function errorFn(error) {
+//   console.error('Oh no there was an error', error);
+// }
 
 // ===== start the server ===== //
 client.connect() // Starts connection to postgres 
