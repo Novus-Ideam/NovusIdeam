@@ -1,4 +1,6 @@
 'use strict';
+
+
 // ===== packages ===== //
 const express = require('express');
 const superagent = require('superagent');
@@ -8,6 +10,7 @@ const pg = require('pg');
 const googleTrends = require('google-trends-api');
 const puppeteer = require('puppeteer');
 
+
 // ===== setup the app ===== //
 const app = express();
 app.use(express.urlencoded({ extended: true }));
@@ -15,8 +18,10 @@ app.use(express.static('./public'));
 const DATABASE_URL = process.env.DATABASE_URL;
 const client = new pg.Client(DATABASE_URL);
 
+
 // ===== other global variables ===== //
 const PORT = process.env.PORT || 3111;
+
 
 // ===== routes ===== //
 app.get('/', getHomeData);
@@ -26,39 +31,36 @@ app.get('/saved-results', getSavedResults);
 //app.post('/search', save);
 app.delete('/search', deleteSaved);
 
+
 // ===== callback functions ===== //
 function getHomeData(req, res) {
-
   // rendering all the search information
-  res.render('./pages/index.ejs');
+  res.render('./pages/index.ejs', { novusIdeam: [] });
 }
 
 async function getSearch(req, res) {
   // getsresults from the search
   // -> index.ejs
   const keyword = req.body.searchQuery;
-
   let resultNums = [];
+
   let googleTrendArray = await googleTrendsData(keyword);
   let valueMapArray = googleTrendArray.map(value => value.query);
 
   for (let index = 0; index < 5; index++) {
-    let math = await scraper(valueMapArray[index]) /// googleTrendArray[index].value;
+    let math = await scraper(valueMapArray[index])
     resultNums.push(math);
   }
-  //console.log(resultNums);
 
   let newArr = googleTrendArray.slice(0, 5).map((trendQuery, index) => {
     return new NovusIdeam(keyword, resultNums[index], trendQuery);
   });
-  console.log(newArr);
 
   res.render('./pages/index.ejs', { novusIdeam: newArr });
 }
 
 function getAbout(req, res) {
-  // sending the user to the about page
-  // -> about.ejs
+  // send the user to the about page
   res.render('./pages/about.ejs');
 }
 
@@ -73,7 +75,7 @@ function save(req, res) {
   return client.query(sqlQuery, sqlArray).then(() => {
     // notify user that ideam has been addedto database (using js to turn item blue?)
     console.log(`added ${ideam.keyword} to database`);
-  })
+  }).catch(errorFn(error)); 
 }
 
 function deleteSaved(req, res) {
@@ -88,7 +90,7 @@ function deleteSaved(req, res) {
   return client.query(sqlQuery, sqlArray).then(() => {
     console.log(`deleted row ${id}`);
     res.redirect('/saved-results');
-  })
+  }).catch(errorFn(error));
 }
 
 function getSavedResults(req, res) {
@@ -99,16 +101,16 @@ function getSavedResults(req, res) {
   const sqlQuery = `SELECT * FROM searches ORDER BY id;`;
   return client.query(sqlQuery).then(result => {
     res.render('pages/saved.ejs', { results: result.rows }); // Passes 'results' to saved.ejs
-  })
+  }).catch(errorFn(error));
 }
+
+
 // ===== Helper Functions ===== // 
 function domain(keyword) {
   const domainUrl = `https://api.domainsdb.info/v1/domains/search?&limit=5&country=us&domain=${keyword}`;
   superagent.get(domainUrl).then(search => {
     return search.body;
-  }).catch(error => {
-    console.error('we broke', error)
-  });
+  }).catch(errorFn(error));
 }
 
 async function googleTrendsData(keyword) {
@@ -118,9 +120,7 @@ async function googleTrendsData(keyword) {
       //possible creat a toggle button that switches from 0 to 1 based on what the user is looking for.
       const relatedKeyword = parsedResults.default.rankedList[0].rankedKeyword;
       return relatedKeyword;
-    }).catch(error => {
-      console.error('Oh no there was an error', error);
-    });
+    }).catch(errorFn(error));
 }
 
 // ***Chance Harmon wrote most of the below function with reference to https://www.youtube.com/watch?v=4q9CNtwdawA ***
@@ -133,9 +133,7 @@ async function scraper(keyword) {
   let data = await page.evaluate(() => {
     let resultCount = document.querySelector('#result-stats').textContent;
     return { resultCount }
-  }).catch(error => {
-    console.error('your scraper scraped the bottom', error);
-  });
+  }).catch(errorFn(error));
   await browser.close();
   const string = data.resultCount;
   const regex = /[0-9,]+/;
@@ -143,14 +141,14 @@ async function scraper(keyword) {
   return resultCountInt;
 }
 
-async function scrapeAll(array) {
-  let countArray = array;
-  for (let item of countArray) {
-    const totalResults = await scraper(item);
-    item = totalResults;
-  };
-  return countArray;
-}
+// async function scrapeAll(array) {
+//   let countArray = array;
+//   for (let item of countArray) {
+//     const totalResults = await scraper(item);
+//     item = totalResults;
+//   };
+//   return countArray;
+// }
 
 // ===== other functions ===== //
 function NovusIdeam(keyword, scraperNum, googleTrendQuery) {
@@ -158,6 +156,10 @@ function NovusIdeam(keyword, scraperNum, googleTrendQuery) {
     this.googleTrendQuery = googleTrendQuery.query,
     this.scraperNum = scraperNum,
     this.nicheScore = scraperNum / googleTrendQuery.value
+}
+
+function errorFn(error) {
+  console.error('Oh no there was an error', error);
 }
 
 // ===== start the server ===== //
