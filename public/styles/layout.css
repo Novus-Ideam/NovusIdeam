@@ -25,6 +25,10 @@ main {
   width: 100%;
 }
 
+header > nav {
+  height: 45px;
+}
+
 main > table {
   width: 90%;
   margin: auto;
@@ -66,6 +70,7 @@ section > h3 {
   grid-row: 1/2;
   align-self: start;
 }
+
 section > p {
   line-height: 20px;
   grid-column: 2 / 3;
