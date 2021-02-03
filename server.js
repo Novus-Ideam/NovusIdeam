@@ -7,7 +7,6 @@ const methodOverride = require('method-override');
 const pg = require('pg');
 const googleTrends = require('google-trends-api');
 const puppeteer = require('puppeteer');
-const { promiseImpl } = require('ejs');
 
 // ===== setup the app ===== //
 const app = express();
@@ -40,26 +39,21 @@ async function getSearch(req, res) {
   const keyword = req.body.searchQuery;
 
   let resultNums = [];
-  let googleTrendArray =  await googleTrendsData(keyword);
-
-  // console.log(googleTrendArray); 
+  let googleTrendArray = await googleTrendsData(keyword);
   let valueMapArray = googleTrendArray.map(value => value.query);
-  console.log(valueMapArray);
-  // console.log(await scrapeAll(valueMapArray[0]));
 
   for (let index = 0; index < 5; index++) {
-    resultNums.push(await scraper(valueMapArray[index]));
+    let math = await scraper(valueMapArray[index]) /// googleTrendArray[index].value;
+    resultNums.push(math);
   }
-  console.log(resultNums);
+  //console.log(resultNums);
 
-// This is corpse code ************
-  // let newArr = googleTrendArray.map((trendQuery) => {
-  //   const scraperNum = await scraper(trendQuery);
-  //   return new NovusIdeam(keyword, scraperNum, trendQuery);
-  // });
-  // console.log(newArr);
-  
-  res.render('./pages/index.ejs');
+  let newArr = googleTrendArray.slice(0, 5).map((trendQuery, index) => {
+    return new NovusIdeam(keyword, resultNums[index], trendQuery);
+  });
+  console.log(newArr);
+
+  res.render('./pages/index.ejs', { novusIdeam: newArr });
 }
 
 function getAbout(req, res) {
@@ -151,7 +145,7 @@ async function scraper(keyword) {
 
 async function scrapeAll(array) {
   let countArray = array;
-  for (let item of countArray){
+  for (let item of countArray) {
     const totalResults = await scraper(item);
     item = totalResults;
   };
@@ -161,9 +155,9 @@ async function scrapeAll(array) {
 // ===== other functions ===== //
 function NovusIdeam(keyword, scraperNum, googleTrendQuery) {
   this.keyword = keyword,
-  this.googleTrendQuery = googleTrendQuery.query,
-  this.scraperNum = scraperNum,
-  this.nicheScore = googleTrendQuery.value / scraperNum
+    this.googleTrendQuery = googleTrendQuery.query,
+    this.scraperNum = scraperNum,
+    this.nicheScore = scraperNum / googleTrendQuery.value
 }
 
 // ===== start the server ===== //
