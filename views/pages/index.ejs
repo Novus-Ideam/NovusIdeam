@@ -7,9 +7,9 @@
           <table>
             <thead>
               <tr>
-                <th>Results</th>
-                <th>Frequency</th>
-                <th>Region</th>
+                <th>Seed Keyword</th>
+                <th>Trending Keyword</th>
+                <th>Google results</th>
                 <th>Competition</th>
                 <th></th>
               </tr>
@@ -30,7 +30,13 @@
                     <%= novusIdeam.nicheScore %>
                   </td>
                   <td>
-                    <button type="button" name="save">Save</button>
+                    <form action="/save" method="POST">
+                      <input type="hidden" name="keyword" value="<%= novusIdeam.keyword%>">
+                      <input type="hidden" name="googleTrendQuery" value="<%= novusIdeam.googleTrendQuery%>">
+                      <input type="hidden" name="scraperNum" value="<%= novusIdeam.scraperNum%>">
+                      <input type="hidden" name="nicheScore" value="<%= novusIdeam.nicheScore%>">
+                      <input type="submit" value="Save">
+                    </form>
                   </td>
                 </tr>
                 <% });%>
