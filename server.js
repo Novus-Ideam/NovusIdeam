@@ -6,7 +6,7 @@ require('dotenv').config();
 const methodOverride = require('method-override');
 const pg = require('pg');
 const googleTrends = require('google-trends-api');
-const cheerio = require('cheerio');//needed for the google scrape of the results
+const puppeteer = require('puppeteer');
 
 // ===== setup the app ===== //
 const app = express();
@@ -21,39 +21,36 @@ const PORT = process.env.PORT || 3111;
 // ===== routes ===== //
 
 app.get('/', getHomeData);
-app.post('/', getSearch);
+app.post('/search', getSearch);
 app.get('/about', getAbout);
 app.get('/saved-results', getSavedResults);
-app.post('/search', save);
+//app.post('/search', save);
 app.delete('/search', deleteSaved);
 
 // ===== callback functions ===== //
 
 function getHomeData(req, res) {
   //rendering all the search information
-  let keyword = 'mucho burrito';
-
-  googleTrends.relatedQueries({ keyword: keyword })
-    .then(results => {
-      //console.log(`is this working? ${JSON.parse(results.default.rankedList[0].rankedKeyword)}`);
-      const parsedResults = JSON.parse(results);
-      console.log(parsedResults.default.rankedList[1]);//possible creat a toggle button that switches from 0 to 1 based on what the user is looking for.
-      const rankedKeywordList = parsedResults.default.rankedList[1];
-    }).catch(error => {
-      console.error('Oh no there was an error', error);
-    });
-
-  const domainUrl = `https://api.domainsdb.info/v1/domains/search?&limit=5&country=us&domain=${keyword}`;
-  superagent.get(domainUrl).then(search => {
-    const suggestedDomains = search.body;
-    console.log(suggestedDomains);
-  });
   res.render('./pages/index.ejs');
 }
 
 function getSearch(req, res) {
   //getting the results from the search
   //index.ejs
+  const keyword = req.body.searchQuery;
+
+  console.log(googleTrendsData(keyword));
+  //console.log(scraper(keyword));
+  //console.log(domain(keyword));
+
+  let googleTrendArray = googleTrendsData(keyword);
+  console.log(googleTrendArray);
+  scraper(keyword);
+  domain(keyword);
+
+  //const novusIdeam = 
+
+  res.render('./pages/index.ejs');
 }
 
 function getAbout(req, res) {
@@ -94,19 +91,62 @@ function deleteSaved(req, res) {
 function getSavedResults(req, res) {
   //take the user to the saved results page. 
   //saved.ejs
-  
+
   // Query SQL db for all saved searches
   const sqlQuery = `SELECT * FROM searches ORDER BY id;`;
-  return client.query(sqlQuery).then( result => {
-    res.render('pages/saved.ejs', {results : result.rows}); // Passes 'results' to saved.ejs
+  return client.query(sqlQuery).then(result => {
+    res.render('pages/saved.ejs', { results: result.rows }); // Passes 'results' to saved.ejs
   })
 }
 // ===== Helper Functions ===== // 
+function domain(keyword) {
+  const domainUrl = `https://api.domainsdb.info/v1/domains/search?&limit=5&country=us&domain=${keyword}`;
+  superagent.get(domainUrl).then(search => {
+    return search.body;
+  }).catch(error => {
+    console.error('we broke', error)
+  });
+}
+
+function googleTrendsData(keyword) {
+  return googleTrends.relatedQueries({ keyword: keyword })
+    .then(results => {
+      const parsedResults = JSON.parse(results);
+      //possible creat a toggle button that switches from 0 to 1 based on what the user is looking for.
+      const relatedKeyword = parsedResults.default.rankedList[1];
+      return relatedKeyword;
+    }).catch(error => {
+      console.error('Oh no there was an error', error);
+    });
+}
+
+async function scraper(keyword) {
+  let q = keyword;
+  let url = `https://www.google.com/search?q=${q}`;
+  let browser = await puppeteer.launch();
+  let page = await browser.newPage();
+  await page.goto(url, { waitIntil: 'networkidle2' })
+  let data = await page.evaluate(() => {
+    let resultCount = document.querySelector('#result-stats').textContent;
+    return { resultCount }
+  });
+  await browser.close();
+  const string = data.resultCount;
+  const regex = /[0-9,]+/;
+  const resultCountInt = parseInt(regex.exec(string)[0].replace(/,/g, ''));
+  return resultCountInt;
+}
 
 // ===== other functions ===== //
+function NovusIdeam(keyword, scraperNum, googleTrendScore) {
+  this.keyword = keyword;
+  this.googleTrendquery = googleTrendScore.query;
+  this.scraperNum = scraper(keyword);
+  this.nicheScore = googleTrendScore.value / scraperNum;
+}
 
 // ===== start the server ===== //
 client.connect() // Starts connection to postgres 
-.then ( () => {
-  app.listen(PORT, () => console.log(`up on PORT ${PORT}`));
-});
+  .then(() => {
+    app.listen(PORT, () => console.log(`up on PORT ${PORT}`));
+  });
