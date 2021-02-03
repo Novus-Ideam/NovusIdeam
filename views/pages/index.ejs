@@ -14,70 +14,22 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-
-                </td>
-                <td>
-
-                </td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>A</td>
-                <td>B</td>
-                <td>C</td>
-                <td>D</td>
-              </tr>
-              <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-              </tr>
-              <tr>
-                <td>A</td>
-                <td>B</td>
-                <td>C</td>
-                <td>D</td>
-              </tr>
-            </tbody>
-          </table>
-          <table>
-            <thead>
-              <tr>
-                <th>Results</th>
-                <th>Frequency</th>
-                <th>Region</th>
-                <th>Competition</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td> </td>
-                <td> </td>
-                <td> </td>
-                <td> </td>
-              </tr>
-              <tr>
-                <td>A</td>
-                <td>B</td>
-                <td>C</td>
-                <td>D</td>
-              </tr>
-              <tr>
-                <td> </td>
-                <td> </td>
-                <td> </td>
-                <td> </td>
-              </tr>
-              <tr>
-                <td>A</td>
-                <td>B</td>
-                <td>C</td>
-                <td>D</td>
-              </tr>
+              <% novusIdeam.forEach(novusIdeam=> {%>
+                <tr>
+                  <td>
+                    <%= novusIdeam.keyword %>
+                  </td>
+                  <td>
+                    <%= novusIdeam.googleTrendQuery %>
+                  </td>
+                  <td>
+                    <%= novusIdeam.scraperNum %>
+                  </td>
+                  <td>
+                    <%= novusIdeam.nicheScore %>
+                  </td>
+                </tr>
+                <% });%>
             </tbody>
           </table>
       </main>
