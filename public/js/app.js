@@ -1,4 +1,9 @@
 'use strict';
-$('.button').click(function () {
-  $('.hide-show').toggle();
+
+$(document).on('click', '.button', function () {
+  let clickedBtnIndex = $(this).data('index');
+  $('.hide-show').eq(clickedBtnIndex).toggle();
 });
+
+
+
