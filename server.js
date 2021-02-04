@@ -49,35 +49,19 @@ async function getSearch(req, res) {
 
   const googleTrendArray = await googleTrendsData(keyword);
   let valueMapArray = googleTrendArray.map(value => value.query);
-  valueMapArray = valueMapArray.slice(0,5);
-  console.log(valueMapArray);
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+  valueMapArray = valueMapArray.slice(0, 5);
 
   const domainSuggestions = await domain(valueMapArray);
-  //console.log(domainSuggestions);
-
-
-  //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-  //===================================================================//
-  //  for (let index = 0; index < 5; index++) {
-  //  let math = await scraper(valueMapArray[index])
-  //  resultNums.push(math);
-  //  }
   resultNums = await scraper(valueMapArray);
-  console.log(resultNums);
-  //===================================================================//
 
-
-  //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
   let newArr = googleTrendArray.slice(0, 5).map((trendQuery, index) => {
-    //console.log(domainSuggestions[index]);
-    return new NovusIdeam(keyword, resultNums[index], trendQuery);
+    console.log(domainSuggestions[index]);
+    return new NovusIdeam(keyword, resultNums[index], trendQuery, domainSuggestions[index]);
   });
 
   res.render('./pages/index.ejs', { novusIdeam: newArr });
 }
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
 function getAbout(req, res) {
   // send the user to the about page
   res.render('./pages/about.ejs');
@@ -174,8 +158,8 @@ async function googleTrendsData(keyword) {
 
 // ***Chance Harmon wrote most of the below function with reference to https://www.youtube.com/watch?v=4q9CNtwdawA ***
 //  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
-async function getBrowser(){
-  if(browser === null){
+async function getBrowser() {
+  if (browser === null) {
     browser = await puppeteer.launch();
   }
   return browser;
@@ -187,25 +171,25 @@ async function scraper(keywords) {
     const url = `https://www.google.com/search?q=${keyword}`;
     let page;
     return browser.newPage()
-    .then((newPage) => {
-      page = newPage;
-      return page.goto(url, { waitUntil: 'domcontentloaded' });
-    })
-    .then(() => {
-      return page.evaluate(() => {
-        return document.querySelector('#result-stats').textContent;
+      .then((newPage) => {
+        page = newPage;
+        return page.goto(url, { waitUntil: 'domcontentloaded' });
       })
-      .catch(error => (null))
-    })
-    .then((countResult) => {
-      if(countResult === null){
-        return null;
-      }
-      const string = countResult;
-      const regex = /[0-9,]+/;
-      return parseInt(regex.exec(string)[0].replace(/,/g, ''));
-    })
-    .finally(() => page.close());
+      .then(() => {
+        return page.evaluate(() => {
+          return document.querySelector('#result-stats').textContent;
+        })
+          .catch(error => (null))
+      })
+      .then((countResult) => {
+        if (countResult === null) {
+          return null;
+        }
+        const string = countResult;
+        const regex = /[0-9,]+/;
+        return parseInt(regex.exec(string)[0].replace(/,/g, ''));
+      })
+      .finally(() => page.close());
   })
   const counts = await Promise.all(scraperPromises);
   console.timeEnd('scrape');
