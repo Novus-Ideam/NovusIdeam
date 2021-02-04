@@ -4,23 +4,26 @@
     <%- include('../layout/header.ejs') %>
       <main>
         <%- include('../layout/search.ejs') %>
+
+          <% if(novusIdeam[0]){%>
+            <h3>Seed Keyword: <%= novusIdeam[0].keyword %></h3>
+          <%};%>
           <table>
             <thead>
               <tr>
-                <th>Seed Keyword</th>
+                <!-- <th>Seed Keyword</th> -->
                 <th>Trending Keyword</th>
                 <th>Google results</th>
                 <th>Competition</th>
-                <th></th>
-                <th></th>
+                <th colspan="2"></th>
               </tr>
             </thead>
             <tbody>
               <% novusIdeam.forEach((novusIdeam, index)=> {%>
                 <tr>
-                  <td>
+                  <!-- <td>
                     <%= novusIdeam.keyword %>
-                  </td>
+                  </td> -->
                   <td>
                     <%= novusIdeam.googleTrendQuery %>
                   </td>
