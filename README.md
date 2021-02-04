@@ -28,7 +28,7 @@ The user would like to generate ideas to start a small business but doesn’t kn
 - Regex101.com
 - https://www.youtube.com/watch?v=4q9CNtwdawA
 - https://stackoverflow.com/questions/37576685/using-async-await-with-a-foreach-loop#37576787
-
+- magnifying glass made by https://www.freepik.com  from https://www.flaticon.com/
 
 ## Domain Model
 ![Domain Model](public/assets/NoIdeamDomainModel.png)
