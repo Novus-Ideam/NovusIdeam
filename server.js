@@ -168,26 +168,29 @@ async function scraper(keywords) {
   const scraperPromises = keywords.map(keyword => {
     const url = `https://www.google.com/search?q=${keyword}`;
     let page;
-    return browser.newPage()
-      .then((newPage) => {
-        page = newPage;
-        return page.goto(url, { waitUntil: 'domcontentloaded' });
+    return getBrowser()
+      .then((browser) => {
+        return browser.newPage()
       })
-      .then(() => {
-        return page.evaluate(() => {
-          return document.querySelector('#result-stats').textContent;
+        .then((newPage) => {
+          page = newPage;
+          return page.goto(url, { waitUntil: 'domcontentloaded' });
         })
+        .then(() => {
+          return page.evaluate(() => {
+            return document.querySelector('#result-stats').textContent;
+          })
           .catch(error => (null))
-      })
-      .then((countResult) => {
-        if (countResult === null) {
-          return null;
-        }
-        const string = countResult;
-        const regex = /[0-9,]+/;
-        return parseInt(regex.exec(string)[0].replace(/,/g, ''));
-      })
-      .finally(() => page.close());
+        })
+        .then((countResult) => {
+          if (countResult === null) {
+            return null;
+          }
+          const string = countResult;
+          const regex = /[0-9,]+/;
+          return parseInt(regex.exec(string)[0].replace(/,/g, ''));
+        })
+        .finally(() => page.close());
   })
   const counts = await Promise.all(scraperPromises);
   console.timeEnd('scrape');
@@ -211,7 +214,5 @@ function NovusIdeam(keyword, scraperNum, googleTrendQuery, suggestedDomain) {
 // ===== start the server ===== //
 client.connect() // Starts connection to postgres 
   .then(() => {
-    return getBrowser()
-  }).then(() => {
     app.listen(PORT, () => console.log(`up on PORT ${PORT}`));
   });
