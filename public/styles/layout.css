@@ -1,30 +1,75 @@
 body {
-  width: 1000px;
-  margin: auto;
+  width: 100%;
+  /* display: flex;
+  flex-wrap: wrap; */
+  justify-content: center;
 }
 
-main {
-  margin-top: 50px;
-}
-
-nav {
-  margin-top: 15px;
-}
-
-ul { 
+header {
+  width: 100%;
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
 }
 
-li {
+header > a {
+  width: 100%;
+}
+
+header > nav {
+  margin-top: 15px;
+  height: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+nav > ul { 
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+}
+
+nav > ul > li {
+  display: inline-block;
+  font-size: 5vw;
   text-align: center;
   flex-grow: 1;
 }
 
+form {
+  margin-top: 5%;
+}
+form > fieldset {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+form > fieldset > input:first-of-type {
+flex: 0 1 95%;
+}
+
+form > fieldset > button {
+  background-image: url(../assets/magnifying-glass.png);
+background-repeat: no-repeat;
+width: 20px;
+margin-right: auto;
+}
+form > fieldset > select {
+  align-items: flex-end;
+  margin-top: 3%;
+}
 main {
   width: 100%;
 }
 
+main > h2 {
+  text-align: center;
+  line-height: 50px;
+  margin-top: 15px;
+}
 main > table {
   width: 90%;
   margin: auto;
@@ -46,5 +91,241 @@ th, td {
 th {
   font-weight: bold;
 }
+main > section:first-of-type {
+  margin-top: 15px;
+}
 
+section {
+  display: flex;
+  flex-wrap: wrap;
+}
 
+section > h3 {
+  order: 1;
+  align-self: start;
+  margin-top: 15px;
+  padding-left: 15px;
+}
+
+section > img:first-of-type {
+  order: 0;
+  width: 100%;
+  max-width: 250px;
+  max-height: 250px;
+  height: 100vw;
+  margin: auto;
+}
+
+section:not(:first-of-type) {
+  margin-top: 10px;
+}
+
+section > p {
+  order: 2;
+  margin-top: 10px;
+  padding: 15px;
+  padding-right: 10px;
+}
+
+section > ul {
+  order: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+section > ul > li {
+  padding-left: 10px;
+}
+
+@media screen and (min-width: 468px) {
+
+  body {
+    width: 95%;
+    margin: auto;
+  }
+
+  main {
+    width: 100%;
+    margin-top: 50px;
+  }
+
+  header > nav {
+    height: 45px;
+    margin-top: 15px;
+  }
+
+  header > nav > ul {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+  }
+
+  header > nav > ul > li {
+    line-height: 39px;
+  }
+
+  main > table {
+    width: 90%;
+    margin: auto;
+    margin-top: 70px;
+    line-height: 20px;
+    border: solid black 1px;
+  }
+
+  main > h2 {
+    text-align: right;
+  }
+
+  tr, th, td {
+    border: solid black 1px;
+  }
+
+  th, td {
+    text-align: left;
+    padding-left: 10px;
+    line-height: 30px;
+  }
+
+  th {
+    font-weight: bold;
+  }
+
+  main > section:first-of-type {
+    margin-top: 30px;
+  }
+
+  section {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: 2fr;
+    border: solid 1px black;
+    padding: 10px;
+  }
+
+  section > h3 {
+    grid-column: 3 / 4;
+    grid-row: 1/2;
+    align-self: start;
+    text-align: right;
+    margin-top: 0px;
+  }
+
+  section > p {
+    line-height: 20px;
+    padding: 10px;
+    grid-column: 2 / 4;
+    grid-row: 1 / 2;
+    align-self: center;
+  }
+
+  section > ul {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+    align-self: start;
+  }
+
+  section > img:first-of-type {
+    width: 250px;
+    height: 250px;
+  }
+  .domains{
+    display:inline;
+    margin: 0 5px;
+    list-style-type: none;
+  }
+}
+
+@media screen and (min-width: 768px) {
+
+  body {
+    width: 95%;
+    margin: auto;
+  }
+
+  main {
+    width: 100%;
+    margin-top: 50px;
+  }
+
+  header > nav {
+    height: 45px;
+    margin-top: 15px;
+  }
+
+  header > nav > ul {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+  }
+
+  header > nav > ul > li {
+    line-height: 39px;
+  }
+
+  main > table {
+    width: 90%;
+    margin: auto;
+    margin-top: 70px;
+    line-height: 20px;
+    border: solid black 1px;
+  }
+
+  main > h2 {
+    text-align: right;
+  }
+
+  tr, th, td {
+    border: solid black 1px;
+  }
+
+  th, td {
+    text-align: left;
+    padding-left: 10px;
+    line-height: 30px;
+  }
+
+  th {
+    font-weight: bold;
+  }
+
+  main > section:first-of-type {
+    margin-top: 30px;
+  }
+
+  section {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    grid-template-rows: 2fr;
+    border: solid 1px black;
+    padding: 10px;
+  }
+
+  section > h3 {
+    grid-column: 3 / 4;
+    grid-row: 1/2;
+    align-self: start;
+    text-align: right;
+    margin-top: 0px;
+  }
+
+  section > p {
+    line-height: 20px;
+    padding: 10px;
+    grid-column: 2 / 4;
+    grid-row: 1 / 2;
+    align-self: center;
+  }
+
+  section > ul {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+    align-self: start;
+  }
+
+  section > img:first-of-type {
+    width: 250px;
+    height: 250px;
+  }
+}

@@ -7,9 +7,22 @@ header {
   font-family: 'Noto Sans JP', sans-serif;
 }
 
-h1 {
-  text-align: right;
+header > a:first-of-type {
+  text-align: center;
   font-size: 3em;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+nav {
+  border: 3px solid #777;
+  background-color: #999;
+  border-radius: 6px;
+  box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
+}
+
+nav > ul > li {
+  vertical-align: center;
 }
 
 nav > ul > li > a {
@@ -18,4 +31,112 @@ nav > ul > li > a {
 
 nav > ul > li > a:hover {
   color: yellow;
+}
+
+h2 {
+  font-size: 2em;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 600;
+}
+
+h3 {
+  font-size: 1.5em;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 500;
+}
+
+p {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 300;
+}
+
+.hide-show {
+  display: none;
+}
+
+.icon {
+  font-size: 30px;
+  color: yellow;
+}
+
+@media screen and (min-width: 468px) {
+
+  body {
+    background-color: rgb(169, 169, 255);
+  }
+
+  header {
+    margin-top: 25px;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+
+  header > a:first-of-type {
+    text-align: right;
+    font-size: 3em;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  header > nav {
+    border: 3px solid #777;
+    background-color: #999;
+    border-radius: 6px;
+    box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
+  }
+  
+  nav > ul > li {
+    line-height: 39px;
+    font-size: 1em;
+  }
+
+  nav > ul > li > a {
+    text-decoration: none;
+  }
+
+  nav > ul > li > a:hover {
+    color: yellow;
+  }
+
+  main > h2 {
+    font-size: 2em;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 600;
+  }
+
+  section > h3 {
+    font-size: 1.5em;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 500;
+  }
+
+  section > img:first-of-type {
+    margin: auto;
+  }
+  
+  section > p {
+    margin-top: 20px;
+    font-family: 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+  }
+
+  section > ul {
+    /* padding-top: 15px; */
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .hide-show {
+    display: none;
+  }
+
+  .domains a, .domains a:link{
+    text-decoration: none;
+    color: rgb(21, 13, 44);
+    cursor: pointer;
+  }
+  
+  .domains a:hover{
+    text-decoration: none; 
+  }
 }

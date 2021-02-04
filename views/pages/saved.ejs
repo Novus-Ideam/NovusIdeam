@@ -1,0 +1,42 @@
+<%- include('../layout/head.ejs') %>
+
+    <body>
+        <%- include('../layout/header.ejs') %>
+            <main>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Keyword</th>
+                                <th>Google result count</th>
+                                <th>Niche Score</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% results.forEach(novusIdeam=> {%>
+                                <tr>
+                                    <td>
+                                        <a href="https://domains.google.com/registrar/search?hl=en&searchTerm=<%= novusIdeam.keyword %>">
+                                            <%= novusIdeam.keyword %>
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <%= novusIdeam.google_results_count %>
+                                    </td>
+                                    <td>
+                                        <%= novusIdeam.niche_score %>
+                                    </td>
+                                    <td>
+                                        <form action="/save/<%= novusIdeam.id%>?_method=delete" method="POST">
+                                            <button type="submit">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <% });%>
+                        </tbody>
+                    </table>
+            </main>
+    </body>
+    <%- include('../layout/footer.ejs') %>
+
+        </html>
