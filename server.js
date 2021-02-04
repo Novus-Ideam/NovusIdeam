@@ -51,10 +51,9 @@ async function getSearch(req, res) {
   const valueMapArray = googleTrendArray.map(value => value.query);
 
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
-  const domainSuggestions = await domain(keyword);
-  //const domainMapArray = domainSuggestions.map(suggestion => suggestion.domain)
-  console.log(domainSuggestions.domains[0].domain);
-  //console.log(domainSuggestions.domain);
+  const domainSuggestions = await domain(valueMapArray);
+  //console.log(domainSuggestions);
+
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
   //===================================================================//
   //  for (let index = 0; index < 5; index++) {
@@ -68,6 +67,7 @@ async function getSearch(req, res) {
 
   //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
   let newArr = googleTrendArray.slice(0, 5).map((trendQuery, index) => {
+    //console.log(domainSuggestions[index]);
     return new NovusIdeam(keyword, resultNums[index], trendQuery);
   });
 
@@ -134,13 +134,25 @@ function getSavedResults(req, res) {
 }
 
 // ===== Helper Functions ===== // 
-async function domain(keyword) {
-  const domainUrl = `https://api.domainsdb.info/v1/domains/search?&limit=5&country=us&domain=${keyword}`;
-  return superagent.get(domainUrl).then(search => {
-    return search.body;
-  }).catch(error => {
-    res.status(500).render('pages/error.ejs');
-    console.log(error.message);
+async function domain(array) {
+  const domainArrayofArrays = [];
+  for (let i = 0; i < array.length; i++) {
+    const googleTrendword = array[i];
+
+    const domainUrl = `https://api.domainsdb.info/v1/domains/search?&limit=5&country=us&domain=${googleTrendword}`;
+    domainArrayofArrays.push(superagent.get(domainUrl));
+  }
+  return Promise.all(domainArrayofArrays).then(search => {
+    const array = [];
+    for (let i = 0; i < search.length; i++) {
+      const container = [];
+      const thing = search[i].body.domains;
+      for (let j = 0; j < thing.length; j++) {
+        container.push(thing[j].domain);
+      }
+      array.push(container);
+    }
+    return array;
   });
 }
 
@@ -162,12 +174,12 @@ async function scraper(array) {
   const resultCountInts = [];
   let browser = await puppeteer.launch();
   // loop over array here 
-  for (let i = 0; i < array.length; i++){
+  for (let i = 0; i < array.length; i++) {
     const q = array[i];
     const url = `https://www.google.com/search?q=${q}`;
     let page = await browser.newPage();
     await page.goto(url, { waitIntil: 'networkidle2' });
-    let data = await page.evaluate( () => {
+    let data = await page.evaluate(() => {
       const resultCount = document.querySelector('#result-stats').textContent;
       return { resultCount }
     }).catch(error => {
