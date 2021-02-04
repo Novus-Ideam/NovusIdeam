@@ -16,7 +16,9 @@
                             <% results.forEach(novusIdeam=> {%>
                                 <tr>
                                     <td>
-                                        <%= novusIdeam.keyword %>
+                                        <a href="https://domains.google.com/registrar/search?hl=en&searchTerm=<%= novusIdeam.keyword %>">
+                                            <%= novusIdeam.keyword %>
+                                        </a>
                                     </td>
                                     <td>
                                         <%= novusIdeam.google_results_count %>

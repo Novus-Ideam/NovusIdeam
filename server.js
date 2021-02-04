@@ -55,7 +55,6 @@ async function getSearch(req, res) {
   resultNums = await scraper(valueMapArray);
 
   let newArr = googleTrendArray.slice(0, 5).map((trendQuery, index) => {
-    console.log(domainSuggestions[index]);
     return new NovusIdeam(keyword, resultNums[index], trendQuery, domainSuggestions[index]);
   });
 
@@ -112,7 +111,6 @@ function getSavedResults(req, res) {
   // Query SQL db for all saved searches
   const sqlQuery = `SELECT * FROM searches ORDER BY niche_score;`;
   return client.query(sqlQuery).then(result => {
-    console.log(result.rows);
     res.render('pages/saved.ejs', { results: result.rows }); // Passes 'results' to saved.ejs
   }).catch(error => {
     res.status(500).render('pages/error.ejs');
@@ -156,7 +154,7 @@ async function googleTrendsData(keyword) {
     });
 }
 
-// ***Chance Harmon wrote most of the below function with reference to https://www.youtube.com/watch?v=4q9CNtwdawA ***
+// ***Chance Harmon wrote most of the below scraper function with reference to https://www.youtube.com/watch?v=4q9CNtwdawA ***
 //  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
 async function getBrowser() {
   if (browser === null) {
@@ -201,7 +199,7 @@ function NovusIdeam(keyword, scraperNum, googleTrendQuery, suggestedDomain) {
   this.keyword = keyword,
     this.googleTrendQuery = googleTrendQuery.query,
     this.scraperNum = scraperNum,
-    this.nicheScore = scraperNum / googleTrendQuery.value,
+    this.nicheScore = Math.floor(scraperNum / googleTrendQuery.value),
     this.suggestedDomain = suggestedDomain
 }
 
