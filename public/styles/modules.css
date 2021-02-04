@@ -50,6 +50,10 @@ p {
   font-weight: 300;
 }
 
+.hide-show {
+  display: none;
+}
+
 @media screen and (min-width: 468px) {
 
   body {
@@ -117,5 +121,8 @@ p {
     justify-content: flex-end;
   }
 
+  .hide-show {
+    display: none;
+  }
 
 }
