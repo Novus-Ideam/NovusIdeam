@@ -11,8 +11,7 @@ header {
   flex-wrap: wrap;
 }
 
-header > h1 {
-  /* display: inherit; */
+header > a {
   width: 100%;
 }
 
@@ -38,6 +37,30 @@ nav > ul > li {
   flex-grow: 1;
 }
 
+form {
+  margin-top: 5%;
+}
+form > fieldset {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+}
+
+form > fieldset > input:first-of-type {
+flex: 0 1 95%;
+}
+
+form > fieldset > button {
+  background-image: url(../assets/magnifying-glass.png);
+background-repeat: no-repeat;
+width: 20px;
+margin-right: auto;
+}
+form > fieldset > select {
+  align-items: flex-end;
+  margin-top: 3%;
+}
 main {
   width: 100%;
 }
@@ -47,7 +70,27 @@ main > h2 {
   line-height: 50px;
   margin-top: 15px;
 }
+main > table {
+  width: 90%;
+  margin: auto;
+  margin-top: 70px;
+  line-height: 20px;
+  border: solid black 1px;
+}
 
+tr, th, td {
+  border: solid black 1px;
+}
+
+th, td {
+  text-align: left;
+  padding-left: 10px;
+  line-height: 30px;
+}
+
+th {
+  font-weight: bold;
+}
 main > section:first-of-type {
   margin-top: 15px;
 }
