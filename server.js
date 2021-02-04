@@ -44,10 +44,12 @@ async function getSearch(req, res) {
   // -> index.ejs
 
   //  TODO: add loading page to index.ejs
-  const keyword = req.body.searchQuery;
+  console.log(req.body);
+  const reqBody = req.body;
+  const keyword = req.body.searchQuery
   let resultNums = [];
 
-  const googleTrendArray = await googleTrendsData(keyword);
+  const googleTrendArray = await googleTrendsData(reqBody);
   let valueMapArray = googleTrendArray.map(value => value.query);
   valueMapArray = valueMapArray.slice(0, 5);
 
@@ -141,15 +143,21 @@ async function domain(array) {
   });
 }
 
-async function googleTrendsData(keyword) {
-  return await googleTrends.relatedQueries({ keyword: keyword })
+async function googleTrendsData(reqBody) {
+  // usage: googleTrends.relatedQueries({keyword: string, startTime: Date, endTime: Date, geo: string}, cbFunc)
+  const keyword = reqBody.searchQuery;
+  const startTime = new Date(reqBody.startTime);
+  const endTime = new Date(reqBody.endTime);
+  const geo = reqBody.geo;
+  console.log(keyword, startTime, endTime, geo);
+  return await googleTrends.relatedQueries({keyword: keyword, startTime: startTime, endTime: endTime, geo: geo})
     .then(results => {
       const parsedResults = JSON.parse(results);
       //possible creat a toggle button that switches from 0 to 1 based on what the user is looking for.
       const relatedKeyword = parsedResults.default.rankedList[0].rankedKeyword;
+      console.log(relatedKeyword);
       return relatedKeyword;
     }).catch(error => {
-      res.status(500).render('pages/error.ejs');
       console.log(error.message);
     });
 }
