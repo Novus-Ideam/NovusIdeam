@@ -22,7 +22,7 @@ const client = new pg.Client(DATABASE_URL);
 
 // ===== other global variables ===== //
 const PORT = process.env.PORT || 3111;
-
+let browser = null;
 
 // ===== routes ===== //
 app.get('/', getHomeData);
@@ -48,11 +48,14 @@ async function getSearch(req, res) {
   let resultNums = [];
 
   const googleTrendArray = await googleTrendsData(keyword);
-  const valueMapArray = googleTrendArray.map(value => value.query);
-
+  let valueMapArray = googleTrendArray.map(value => value.query);
+  valueMapArray = valueMapArray.slice(0,5);
+  console.log(valueMapArray);
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
   const domainSuggestions = await domain(valueMapArray);
   //console.log(domainSuggestions);
+
 
   //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
   //===================================================================//
@@ -170,41 +173,44 @@ async function googleTrendsData(keyword) {
 }
 
 // ***Chance Harmon wrote most of the below function with reference to https://www.youtube.com/watch?v=4q9CNtwdawA ***
-async function scraper(array) {
-  const resultCountInts = [];
-  let browser = await puppeteer.launch();
-  // loop over array here 
-  for (let i = 0; i < array.length; i++) {
-    const q = array[i];
-    const url = `https://www.google.com/search?q=${q}`;
-    let page = await browser.newPage();
-    await page.goto(url, { waitIntil: 'networkidle2' });
-    let data = await page.evaluate(() => {
-      const resultCount = document.querySelector('#result-stats').textContent;
-      return { resultCount }
-    }).catch(error => {
-      res.status(500).render('pages/error.ejs');
-      console.log(error.message);
-    });
-    const string = data.resultCount;
-    const regex = /[0-9,]+/;
-    const resultCountInt = parseInt(regex.exec(string)[0].replace(/,/g, ''));
-    resultCountInts.push(resultCountInt);
-    // await page.close();
+//  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
+async function getBrowser(){
+  if(browser === null){
+    browser = await puppeteer.launch();
   }
-  // end loop
-  await browser.close();
-  return resultCountInts;
+  return browser;
 }
-
-// async function scrapeAll(array) {
-//   let countArray = array;
-//   for (let item of countArray) {
-//     const totalResults = await scraper(item);
-//     item = totalResults;
-//   };
-//   return countArray;
-// }
+async function scraper(keywords) {
+  console.time('scrape');
+  // loop over keywords here 
+  const scraperPromises = keywords.map(keyword => {
+    const url = `https://www.google.com/search?q=${keyword}`;
+    let page;
+    return browser.newPage()
+    .then((newPage) => {
+      page = newPage;
+      return page.goto(url, { waitUntil: 'domcontentloaded' });
+    })
+    .then(() => {
+      return page.evaluate(() => {
+        return document.querySelector('#result-stats').textContent;
+      })
+      .catch(error => (null))
+    })
+    .then((countResult) => {
+      if(countResult === null){
+        return null;
+      }
+      const string = countResult;
+      const regex = /[0-9,]+/;
+      return parseInt(regex.exec(string)[0].replace(/,/g, ''));
+    })
+    .finally(() => page.close());
+  })
+  const counts = await Promise.all(scraperPromises);
+  console.timeEnd('scrape');
+  return counts;
+}
 
 // ===== other functions ===== //
 function NovusIdeam(keyword, scraperNum, googleTrendQuery, suggestedDomain) {
@@ -223,5 +229,7 @@ function NovusIdeam(keyword, scraperNum, googleTrendQuery, suggestedDomain) {
 // ===== start the server ===== //
 client.connect() // Starts connection to postgres 
   .then(() => {
+    return getBrowser()
+  }).then(() => {
     app.listen(PORT, () => console.log(`up on PORT ${PORT}`));
   });
