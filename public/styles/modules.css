@@ -54,6 +54,11 @@ p {
   display: none;
 }
 
+.icon {
+  font-size: 30px;
+  color: yellow;
+}
+
 @media screen and (min-width: 468px) {
 
   body {
@@ -81,7 +86,7 @@ p {
   
   nav > ul > li {
     line-height: 39px;
-    font-size: 2vw;
+    font-size: 1em;
   }
 
   nav > ul > li > a {

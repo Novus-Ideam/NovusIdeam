@@ -110,7 +110,10 @@ section > h3 {
 section > img:first-of-type {
   order: 0;
   width: 100%;
+  max-width: 250px;
+  max-height: 250px;
   height: 100vw;
+  margin: auto;
 }
 
 section:not(:first-of-type) {
@@ -136,7 +139,7 @@ section > ul > li {
   padding-left: 10px;
 }
 
-@media screen and (min-width: 480px) {
+@media screen and (min-width: 468px) {
 
   body {
     width: 95%;
@@ -311,9 +314,9 @@ section > ul > li {
   }
 
   section > ul {
-    grid-column: 3 / 4;
+    grid-column: 2 / 3;
     grid-row: 1 / 2;
-    align-self: end;
+    align-self: start;
   }
 
   section > img:first-of-type {
