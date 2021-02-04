@@ -1,6 +1,5 @@
 'use strict';
 
-
 // ===== packages ===== //
 const express = require('express');
 const superagent = require('superagent');
@@ -150,7 +149,7 @@ async function googleTrendsData(reqBody) {
   const keyword = reqBody.searchQuery;
   const startTime = new Date(reqBody.startTime);
   const endTime = new Date(reqBody.endTime);
-  const geo = reqBody.geo;
+  const geo = reqBody.geo.toUpperCase();
   return await googleTrends.relatedQueries({keyword: keyword, startTime: startTime, endTime: endTime, geo: geo})
     .then(results => {
       const parsedResults = JSON.parse(results);
@@ -221,7 +220,7 @@ function NovusIdeam(keyword, scraperNum, googleTrendQuery, suggestedDomain) {
   this.keyword = keyword,
     this.googleTrendQuery = googleTrendQuery.query,
     this.scraperNum = scraperNum,
-    this.nicheScore = Math.floor(scraperNum / googleTrendQuery.value),
+    this.nicheScore = Math.floor(scraperNum / googleTrendQuery.value / 10000),
     this.suggestedDomain = suggestedDomain
 }
 
