@@ -44,10 +44,14 @@
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="6"><a
-                      href="https://domains.google.com/registrar/search?hl=en&searchTerm=<%= novusIdeam.suggestedDomain %>">
-                      <%= novusIdeam.suggestedDomain %>
-                    </a>
+                  <td colspan="6">
+                    <% novusIdeam.suggestedDomain.forEach(novusIdeam=>{ %>
+                      <li>
+                        <a href="https://domains.google.com/registrar/search?hl=en&searchTerm=<%= novusIdeam %>">
+                          <%= novusIdeam %>
+                        </a>
+                      </li>
+                      <% }); %>
                   </td>
                 </tr>
                 <% });%>
