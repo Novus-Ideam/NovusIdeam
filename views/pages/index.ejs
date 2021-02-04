@@ -16,7 +16,7 @@
               </tr>
             </thead>
             <tbody>
-              <% novusIdeam.forEach(novusIdeam=> {%>
+              <% novusIdeam.forEach((novusIdeam, index)=> {%>
                 <tr>
                   <td>
                     <%= novusIdeam.keyword %>
@@ -40,11 +40,11 @@
                     </form>
                   </td>
                   <td>
-                    <button class="button"> Get Domain Suggestions</button>
+                    <button class="button" data-index="<%= index %>"> Get Domain Suggestions</button>
                   </td>
                 </tr>
                 <tr>
-                  <td colspan="6" class="hide-show">
+                  <td colspan=" 6" class="hide-show">
                     <% novusIdeam.suggestedDomain.forEach(novusIdeam=>{ %>
                       <li class="domains">
                         <a href="https://domains.google.com/registrar/search?hl=en&searchTerm=<%= novusIdeam %>">
