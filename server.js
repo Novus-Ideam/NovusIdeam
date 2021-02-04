@@ -158,7 +158,7 @@ async function googleTrendsData(keyword) {
 //  https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
 async function getBrowser() {
   if (browser === null) {
-    browser = await puppeteer.launch();
+    browser = await puppeteer.launch({ args: ['--no-sandbox'] });
   }
   return browser;
 }
