@@ -122,6 +122,7 @@ function getSavedResults(req, res) {
 
 // ===== Helper Functions ===== // 
 async function domain(array) {
+  const regex = /\.ru|\.xxx|\.se|\.de|\.dk|\.za|\.fr|\.au|\.ch|(sex)|(porno)/g;
   const domainArrayofArrays = [];
   for (let i = 0; i < array.length; i++) {
     const googleTrendword = array[i];
@@ -135,7 +136,9 @@ async function domain(array) {
       const container = [];
       const thing = search[i].body.domains;
       for (let j = 0; j < thing.length; j++) {
-        container.push(thing[j].domain);
+        if (!regex.test(thing[j].domain)) {
+          container.push(thing[j].domain);
+        }
       }
       array.push(container);
     }
@@ -150,7 +153,7 @@ async function googleTrendsData(reqBody) {
   const endTime = new Date(reqBody.endTime);
   const geo = reqBody.geo;
   console.log(keyword, startTime, endTime, geo);
-  return await googleTrends.relatedQueries({keyword: keyword, startTime: startTime, endTime: endTime, geo: geo})
+  return await googleTrends.relatedQueries({ keyword: keyword, startTime: startTime, endTime: endTime, geo: geo })
     .then(results => {
       const parsedResults = JSON.parse(results);
       //possible creat a toggle button that switches from 0 to 1 based on what the user is looking for.
@@ -180,25 +183,25 @@ async function scraper(keywords) {
       .then((browser) => {
         return browser.newPage()
       })
-        .then((newPage) => {
-          page = newPage;
-          return page.goto(url, { waitUntil: 'domcontentloaded' });
+      .then((newPage) => {
+        page = newPage;
+        return page.goto(url, { waitUntil: 'domcontentloaded' });
+      })
+      .then(() => {
+        return page.evaluate(() => {
+          return document.querySelector('#result-stats').textContent;
         })
-        .then(() => {
-          return page.evaluate(() => {
-            return document.querySelector('#result-stats').textContent;
-          })
           .catch(error => (null))
-        })
-        .then((countResult) => {
-          if (countResult === null) {
-            return null;
-          }
-          const string = countResult;
-          const regex = /[0-9,]+/;
-          return parseInt(regex.exec(string)[0].replace(/,/g, ''));
-        })
-        .finally(() => page.close());
+      })
+      .then((countResult) => {
+        if (countResult === null) {
+          return null;
+        }
+        const string = countResult;
+        const regex = /[0-9,]+/;
+        return parseInt(regex.exec(string)[0].replace(/,/g, ''));
+      })
+      .finally(() => page.close());
   })
   const counts = await Promise.all(scraperPromises);
   console.timeEnd('scrape');
