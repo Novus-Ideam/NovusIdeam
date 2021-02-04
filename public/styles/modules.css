@@ -7,10 +7,11 @@ header {
   font-family: 'Noto Sans JP', sans-serif;
 }
 
-h1 {
+header > a:first-of-type {
   text-align: center;
   font-size: 3em;
   font-weight: 700;
+  text-decoration: none;
 }
 
 nav {
@@ -60,10 +61,11 @@ p {
     font-family: 'Noto Sans JP', sans-serif;
   }
 
-  header > h1 {
+  header > a:first-of-type {
     text-align: right;
     font-size: 3em;
     font-weight: 700;
+    text-decoration: none;
   }
 
   header > nav {
@@ -72,7 +74,7 @@ p {
     border-radius: 6px;
     box-shadow: 5px 5px rgba(0, 0, 0, 0.5);
   }
-
+  
   nav > ul > li {
     line-height: 39px;
     font-size: 2vw;
