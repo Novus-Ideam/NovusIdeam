@@ -130,4 +130,13 @@ p {
     display: none;
   }
 
+  .domains a, .domains a:link{
+    text-decoration: none;
+    color: rgb(21, 13, 44);
+    cursor: pointer;
+  }
+  
+  .domains a:hover{
+    text-decoration: none; 
+  }
 }

@@ -40,13 +40,13 @@
                     </form>
                   </td>
                   <td>
-                    <button id="button"> Get Domain Suggestions</button>
+                    <button class="button"> Get Domain Suggestions</button>
                   </td>
                 </tr>
                 <tr>
                   <td colspan="6" class="hide-show">
                     <% novusIdeam.suggestedDomain.forEach(novusIdeam=>{ %>
-                      <li>
+                      <li class="domains">
                         <a href="https://domains.google.com/registrar/search?hl=en&searchTerm=<%= novusIdeam %>">
                           <%= novusIdeam %>
                         </a>
@@ -60,5 +60,6 @@
       </main>
   </body>
   <%- include('../layout/footer.ejs') %>
-  <script src="../../js/app.js"></script>
-</html>
+    <script src="../../js/app.js"></script>
+
+    </html>
