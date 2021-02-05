@@ -211,7 +211,7 @@ async function scraper(keywords) {
       // Lastly, kill the page
       .finally(() => page.close());
   })
-  const counts = await Promise.all(scraperPromises);
+  const counts = await Promise.all(scraperPromises).catch(console.log);
   // runs all Puppeteer pages simultaneously, returns promise results to counts
   console.timeEnd('scrape');
   return counts;
