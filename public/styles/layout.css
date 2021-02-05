@@ -36,23 +36,32 @@ nav > ul > li {
 }
 
 form {
-  margin-top: 5%;
+  margin-top: 20px;
 }
 form > fieldset {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-evenly;
+  align-items:center;
+  justify-content: flex-end;
+  margin-right: 50px;
+  margin-top: 25px;
+}
+form > fieldset > label{
+  padding-left: 10px;
+  padding-right: 5px;
 }
 
 form > fieldset > input:first-of-type {
-flex: 0 1 95%;
+  display:block;
+flex:  90%;
 }
 
 form > fieldset > button {
   background-image: url(../assets/magnifying-glass.png);
 background-repeat: no-repeat;
 width: 20px;
+height:20px;
 margin-right: auto;
 }
 form > fieldset > select {
@@ -71,13 +80,13 @@ main > h2 {
 main > table {
   width: 90%;
   margin: auto;
-  margin-top: 70px;
+  margin-top: 20px;
   line-height: 20px;
-  border: solid black 1px;
+  border: solid rgb(44, 44, 48) 1px;
 }
 
 tr, th, td {
-  border: solid black 1px;
+  border: solid rgb(44, 44, 48) 1px;
 }
 
 th, td {
@@ -143,11 +152,13 @@ section > ul > li {
 }
 
 footer {
-  position: fixed;
-  bottom: 0;
+
+  position: relative;
+  top: 200;
   left: 0;
   height: 2rem;
-  margin-left: 1rem;
+  margin-top: 30px;
+  margin-left: 50px;
 }
 
 @media screen and (min-width: 468px) {
@@ -180,9 +191,9 @@ footer {
   main > table {
     width: 90%;
     margin: auto;
-    margin-top: 70px;
+    margin-top: 20px;
     line-height: 20px;
-    border: solid black 1px;
+    border: solid rgb(44, 44, 48)1px;
   }
 
   main > h2 {
@@ -190,7 +201,7 @@ footer {
   }
 
   tr, th, td {
-    border: solid black 1px;
+    border: solid rgb(44, 44, 48) 1px;
   }
 
   th, td {
@@ -211,7 +222,7 @@ footer {
     display: grid;
     grid-template-columns: 1fr 2fr;
     grid-template-rows: 2fr;
-    border: solid 1px black;
+    border: solid 1px rgb(44, 44, 48);
     padding: 10px;
   }
 
@@ -246,6 +257,16 @@ footer {
     margin: 0 5px;
     list-style-type: none;
   }
+  .numbers{
+    text-align: right;
+    padding-right: 10px;
+  }
+  .keyword{
+    position: relative;
+    margin-left: 50px;
+    margin-top: 20px;
+    font-size: 1.2em;
+  }
 }
 
 @media screen and (min-width: 768px) {
@@ -278,9 +299,9 @@ footer {
   main > table {
     width: 90%;
     margin: auto;
-    margin-top: 70px;
+    margin-top: 20px;
     line-height: 20px;
-    border: solid black 1px;
+    border: solid rgb(44, 44, 48) 1px;
   }
 
   main > h2 {
@@ -288,7 +309,7 @@ footer {
   }
 
   tr, th, td {
-    border: solid black 1px;
+    border: solid rgb(44, 44, 48) 1px;
   }
 
   th, td {
@@ -309,7 +330,7 @@ footer {
     display: grid;
     grid-template-columns: 1fr 2fr;
     grid-template-rows: 2fr;
-    border: solid 1px black;
+    border: solid 1px rgb(44, 44, 48);
     padding: 10px;
   }
 
@@ -338,5 +359,11 @@ footer {
   section > img:first-of-type {
     width: 250px;
     height: 250px;
+  }
+  .keyword{
+    position: relative;
+    margin-left: 50px;
+    margin-top: 20px;
+    font-size: 1.2em;
   }
 }

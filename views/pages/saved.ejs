@@ -3,38 +3,39 @@
     <body>
         <%- include('../layout/header.ejs') %>
             <main>
-                    <table>
-                        <thead>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Keyword</th>
+                            <th>Google Results Count</th>
+                            <th>Competition Score</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% results.forEach(novusIdeam=> {%>
                             <tr>
-                                <th>Keyword</th>
-                                <th>Google Results Count</th>
-                                <th>Competition Score</th>
-                                <th></th>
+                                <td>
+                                    <a href="https://domains.google.com/registrar/search?hl=en&searchTerm=<%= novusIdeam.keyword %>"
+                                        target="_blank">
+                                        <%= novusIdeam.keyword %>
+                                    </a>
+                                </td>
+                                <td class="numbers">
+                                    <%= novusIdeam.google_results_count %>
+                                </td>
+                                <td class="numbers">
+                                    <%= novusIdeam.niche_score %>
+                                </td>
+                                <td>
+                                    <form action="/save/<%= novusIdeam.id%>?_method=delete" method="POST">
+                                        <button class="button" type="submit">Delete</button>
+                                    </form>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <% results.forEach(novusIdeam=> {%>
-                                <tr>
-                                    <td>
-                                        <a href="https://domains.google.com/registrar/search?hl=en&searchTerm=<%= novusIdeam.keyword %>">
-                                            <%= novusIdeam.keyword %>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <%= novusIdeam.google_results_count %>
-                                    </td>
-                                    <td>
-                                        <%= novusIdeam.niche_score %>
-                                    </td>
-                                    <td>
-                                        <form action="/save/<%= novusIdeam.id%>?_method=delete" method="POST">
-                                            <button type="submit">Delete</button>
-                                        </form>
-                                    </td>
-                                </tr>
-                                <% });%>
-                        </tbody>
-                    </table>
+                            <% });%>
+                    </tbody>
+                </table>
             </main>
     </body>
     <%- include('../layout/footer.ejs') %>

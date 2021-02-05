@@ -6,14 +6,16 @@
         <%- include('../layout/search.ejs') %>
 
           <% if(novusIdeam[0]){%>
-            <h3>Seed Keyword: <%= novusIdeam[0].keyword %></h3>
+            <h3 class="keyword">Seed Keyword: <%= novusIdeam[0].keyword %>
+            </h3>
             <table>
               <thead>
                 <tr>
                   <th>Trending Keyword</th>
                   <th>Google results</th>
                   <th>Competition</th>
-                  <th colspan="2"></th>
+                  <th colspan=" 2">
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -22,10 +24,10 @@
                     <td>
                       <%= novusIdeam.googleTrendQuery %>
                     </td>
-                    <td>
+                    <td class="numbers">
                       <%= novusIdeam.scraperNum %>
                     </td>
-                    <td>
+                    <td class="numbers">
                       <%= novusIdeam.nicheScore %>
                     </td>
                     <td>
@@ -34,7 +36,7 @@
                         <input type="hidden" name="googleTrendQuery" value="<%= novusIdeam.googleTrendQuery%>">
                         <input type="hidden" name="scraperNum" value="<%= novusIdeam.scraperNum%>">
                         <input type="hidden" name="nicheScore" value="<%= novusIdeam.nicheScore%>">
-                        <input class ="button" type="submit" value="Save">
+                        <input class="button" type="submit" value="Save">
                       </form>
                     </td>
                     <td>
@@ -45,20 +47,21 @@
                     <td colspan=" 6" class="hide-show">
                       <% novusIdeam.suggestedDomain.forEach(novusIdeam=>{ %>
                         <li class="domains">
-                          <a href="https://domains.google.com/registrar/search?hl=en&searchTerm=<%= novusIdeam %>">
+                          <a href="https://domains.google.com/registrar/search?hl=en&searchTerm=<%= novusIdeam %>"
+                            target="_blank">
                             <%= novusIdeam %>
                           </a>
                         </li>
                         <% }); %>
-                      </td>
-                    </tr>
-                    <% });%>
-                  </tbody>
-                </table>
-                <%};%>
-              </main>
-            </body>
-            <%- include('../layout/footer.ejs') %>
-            <script src="../../js/app.js"></script>
+                    </td>
+                  </tr>
+                  <% });%>
+              </tbody>
+            </table>
+            <%};%>
+      </main>
+  </body>
+  <%- include('../layout/footer.ejs') %>
+    <script src="../../js/app.js"></script>
 
     </html>
