@@ -24,7 +24,7 @@ const PORT = process.env.PORT || 3111;
 let browser = null;
 
 // ===== Routes ===== //
-app.get('/', getHomeData); 
+app.get('/', getHomeData);
 app.post('/search', getSearch);
 app.get('/about', getAbout);
 app.get('/saved-results', getSavedResults);
@@ -123,6 +123,7 @@ function getSavedResults(req, res) {
 // ===== Helper Functions ===== // 
 async function domain(array) {
   // Gets related avaiable domain names from Domain API
+  const regex = /\.ru|\.xxx|\.se|\.de|\.dk|\.za|\.fr|\.au|\.ch|(sex)|(porno)/g;
   const domainArrayofArrays = [];
   for (let i = 0; i < array.length; i++) {
     const googleTrendword = array[i];
@@ -136,7 +137,9 @@ async function domain(array) {
       const container = [];
       const thing = search[i].body.domains;
       for (let j = 0; j < thing.length; j++) {
-        container.push(thing[j].domain);
+        if (!regex.test(thing[j].domain)) {
+          container.push(thing[j].domain);
+        }
       }
       array.push(container);
     }
@@ -150,7 +153,7 @@ async function googleTrendsData(reqBody) {
   const startTime = new Date(reqBody.startTime);
   const endTime = new Date(reqBody.endTime);
   const geo = reqBody.geo.toUpperCase();
-  return await googleTrends.relatedQueries({keyword: keyword, startTime: startTime, endTime: endTime, geo: geo})
+  return await googleTrends.relatedQueries({ keyword: keyword, startTime: startTime, endTime: endTime, geo: geo })
     .then(results => {
       const parsedResults = JSON.parse(results);
       // possible create a toggle button that switches from 0 to 1 based on what the user is looking for.
@@ -178,35 +181,35 @@ async function scraper(keywords) {
     const url = `https://www.google.com/search?q=${keyword}`;
     let page;
     return getBrowser()
-    // start up browser instance if not already started
+      // start up browser instance if not already started
       .then((browser) => {
         return browser.newPage()
         // start new browser tab instance
       })
-        .then((newPage) => {
-          page = newPage;
-          return page.goto(url, { waitUntil: 'domcontentloaded' });
-          // load given url on tab
+      .then((newPage) => {
+        page = newPage;
+        return page.goto(url, { waitUntil: 'domcontentloaded' });
+        // load given url on tab
+      })
+      .then(() => {
+        return page.evaluate(() => {
+          return document.querySelector('#result-stats').textContent;
+          // grab #result-stats object from rendered html. contains total search results
         })
-        .then(() => {
-          return page.evaluate(() => {
-            return document.querySelector('#result-stats').textContent;
-            // grab #result-stats object from rendered html. contains total search results
-          })
           .catch(error => (null))
-          // if loading error, return null
-        })
-        .then((countResult) => {
-          if (countResult === null) {
-            return null;
-          }
-          // regex for pulling Number from string of "results:..."
-          const string = countResult;
-          const regex = /[0-9,]+/;
-          return parseInt(regex.exec(string)[0].replace(/,/g, ''));
-        })
-        // Lastly, kill the page
-        .finally(() => page.close());
+        // if loading error, return null
+      })
+      .then((countResult) => {
+        if (countResult === null) {
+          return null;
+        }
+        // regex for pulling Number from string of "results:..."
+        const string = countResult;
+        const regex = /[0-9,]+/;
+        return parseInt(regex.exec(string)[0].replace(/,/g, ''));
+      })
+      // Lastly, kill the page
+      .finally(() => page.close());
   })
   const counts = await Promise.all(scraperPromises);
   // runs all Puppeteer pages simultaneously, returns promise results to counts
