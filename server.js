@@ -123,7 +123,7 @@ function getSavedResults(req, res) {
 // ===== Helper Functions ===== // 
 async function domain(array) {
   // Gets related avaiable domain names from Domain API
-  const regex = /\.ru|\.xxx|\.se|\.de|\.dk|\.za|\.fr|\.au|\.ch|(sex)|(porno)/g;
+  const regex = /\.ru|\.xxx|\.se|\.de|\.dk|\.za|\.fr|\.au|\.ch|(sex)|(porno)|(fuck)|(cock)/g;
   const domainArrayofArrays = [];
   for (let i = 0; i < array.length; i++) {
     const googleTrendword = array[i];
